@@ -1,5 +1,6 @@
 package com.gabrielsantana.todolist.user;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.gabrielsantana.todolist.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,8 @@ public class UserService {
     }
 
     public User create(User user) {
+        String hash = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+        user.setPassword(hash);
         return repository.save(user);
     }
 }
