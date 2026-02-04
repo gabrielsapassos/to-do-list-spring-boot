@@ -30,13 +30,13 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<User> createUser(@RequestBody User userRequest) {
-        User user = service.create(userRequest);
+    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequest) {
+        UserResponseDTO user = service.create(userRequest);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(user.getId())
+                .buildAndExpand(user.id())
                 .toUri();
 
         return ResponseEntity.created(location).body(user);
