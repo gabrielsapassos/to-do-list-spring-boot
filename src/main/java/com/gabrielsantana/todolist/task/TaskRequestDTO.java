@@ -18,7 +18,6 @@ public record TaskRequestDTO(
         String description,
 
         LocalDateTime startAt,
-
         LocalDateTime endAt,
 
         @NotNull
