@@ -1,5 +1,6 @@
 package com.gabrielsantana.todolist.task;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,13 +24,13 @@ public class TaskController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Task> crateTask(@RequestBody Task request) {
-        Task task = taskService.create(request);
+    public ResponseEntity<TaskResponseDTO> crateTask(@Valid @RequestBody TaskRequestDTO request) {
+        TaskResponseDTO task = taskService.create(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(task.getId())
+                .buildAndExpand(task.userId())
                 .toUri();
 
         return ResponseEntity.created(location).body(task);
