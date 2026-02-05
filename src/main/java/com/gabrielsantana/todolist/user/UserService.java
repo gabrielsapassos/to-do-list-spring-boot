@@ -5,6 +5,7 @@ import com.gabrielsantana.todolist.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -18,12 +19,16 @@ public class UserService {
         this.mapper = mapper;
     }
 
-    public List<User> findAll() {
-        return repository.findAll();
+    public List<UserResponseDTO> findAll() {
+        List<User> users = repository.findAll();
+
+        return mapper.toUserResponseDTOList(users);
     }
 
-    public User findByUsername(String username) {
-        return repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+    public UserResponseDTO findByUsername(String username) {
+        User user = repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
+        return mapper.toUserResponseDTO(user);
     }
 
     @Transactional

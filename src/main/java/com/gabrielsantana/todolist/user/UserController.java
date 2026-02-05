@@ -18,14 +18,14 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = service.findAll();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<UserResponseDTO> users = service.findAll();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        User user = service.findByUsername(username);
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        UserResponseDTO user = service.findByUsername(username);
         return ResponseEntity.ok(user);
     }
 
