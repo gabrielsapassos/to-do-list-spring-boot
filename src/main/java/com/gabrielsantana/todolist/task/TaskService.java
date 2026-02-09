@@ -21,6 +21,12 @@ public class TaskService {
         this.userService = userService;
     }
 
+    public List<TaskResponseDTO> findALl() {
+        List<Task> tasks = repository.findAll();
+
+        return mapper.toResponseDTOList(tasks);
+    }
+
     public TaskResponseDTO findById(Long id) {
         Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 

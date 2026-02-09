@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -17,9 +18,16 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @GetMapping("")
+    public ResponseEntity<List<TaskResponseDTO>> getTasks() {
+        List<TaskResponseDTO> tasks = taskService.findALl();
+
+        return ResponseEntity.ok(tasks);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Task response = taskService.findById(id);
+    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable Long id) {
+        TaskResponseDTO response = taskService.findById(id);
         return ResponseEntity.ok(response);
     }
 
