@@ -1,37 +1,45 @@
 package com.gabrielsantana.todolist.task;
 
 import com.gabrielsantana.todolist.exceptions.TaskNotFoundException;
-import com.gabrielsantana.todolist.exceptions.UserNotFoundException;
 import com.gabrielsantana.todolist.user.User;
-import com.gabrielsantana.todolist.user.UserRepository;
+import com.gabrielsantana.todolist.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class TaskService {
 
-    private final TaskRepository taskRepository;
+    private final TaskRepository repository;
     private final TaskMapper mapper;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public TaskService(TaskRepository taskRepository, TaskMapper mapper, UserRepository userRepository) {
-        this.taskRepository = taskRepository;
+    public TaskService(TaskRepository taskRepository, TaskMapper mapper, UserService userService) {
+        this.repository = taskRepository;
         this.mapper = mapper;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    public Task findById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+    public TaskResponseDTO findById(Long id) {
+        Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+
+        return mapper.toResponseDTO(task);
     }
 
     @Transactional
     public TaskResponseDTO create(TaskRequestDTO request) {
-        User user = userRepository.findById(request.userId())
-                                  .orElseThrow(() -> new UserNotFoundException(request.userId()));
+        User user = userService.findById(request.userId());
 
         Task task = mapper.toEntity(request, user);
-        taskRepository.save(task);
+        repository.save(task);
 
         return mapper.toResponseDTO(task);
+    }
+
+    public void deleteTasksByUser(User user) {
+        List<Task> tasks = repository.findByUser(user).orElseThrow(() -> new TaskNotFoundException(user));
+
+        repository.deleteAll(tasks);
     }
 }

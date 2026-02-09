@@ -1,11 +1,14 @@
 package com.gabrielsantana.todolist.user;
 
+import jakarta.validation.constraints.NotBlank;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -13,7 +16,7 @@ public class UserController {
 
     private final UserService service;
 
-    public UserController (UserService service) {
+    public UserController(UserService service) {
         this.service = service;
     }
 
@@ -40,5 +43,19 @@ public class UserController {
                 .toUri();
 
         return ResponseEntity.created(location).body(user);
+    }
+
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<UserResponseDTO> deleteUserById(@PathVariable UUID id) throws BadRequestException {
+        UserResponseDTO responseDTO = service.delete(id);
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @DeleteMapping("/username/{username}")
+    public ResponseEntity<UserResponseDTO> deleteUserByUsername(@PathVariable @NotBlank String username) throws BadRequestException {
+        UserResponseDTO responseDTO = service.delete(username);
+
+        return ResponseEntity.ok(responseDTO);
     }
 }
