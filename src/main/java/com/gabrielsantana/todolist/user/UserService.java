@@ -68,4 +68,11 @@ public class UserService {
 
         return mapper.toUserResponseDTO(user);
     }
+    public boolean userExists(String username) {
+        return repository.findByUsername(username).isPresent();
+    }
+
+    public User findEntityByUsername(String username) {
+        return repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+    }
 }
