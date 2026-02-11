@@ -25,6 +25,14 @@ public class FilterTaskAuth extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
+        // If the request is a POST of a new user, let it pass right away
+        String path = request.getServletPath();
+        if (path.equals("/api/v1/users") && request.getMethod().equals("POST")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // Gets the username and password fields in the request
         String auth = request.getHeader("Authorization");
 
