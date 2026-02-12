@@ -1,12 +1,16 @@
 package com.gabrielsantana.todolist.task;
 
+import com.gabrielsantana.todolist.exceptions.UserNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -19,8 +23,13 @@ public class TaskController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<TaskResponseDTO>> getTasks() {
-        List<TaskResponseDTO> tasks = taskService.findALl();
+    public ResponseEntity<List<TaskResponseDTO>> getTasks(HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("user");
+        if (userId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<TaskResponseDTO> tasks = taskService.findByUserId(userId);
 
         return ResponseEntity.ok(tasks);
     }

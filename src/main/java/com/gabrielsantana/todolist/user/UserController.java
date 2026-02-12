@@ -1,5 +1,6 @@
 package com.gabrielsantana.todolist.user;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotBlank;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,23 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
         UserResponseDTO user = service.findByUsername(username);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDTO> getMyProfile(HttpServletRequest request) {
+        // Recupera o userId do usuário autenticado armazenado no filtro
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        // Busca o perfil do usuário autenticado
+        User user = service.findById(userId);
+        UserResponseDTO userDTO = new UserResponseDTO(
+            user.getId(),
+            user.getUsername(),
+            user.getName(),
+            user.getCreatedAt()
+        );
+
+        return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping("")

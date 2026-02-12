@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class TaskService {
@@ -31,6 +32,12 @@ public class TaskService {
         Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
         return mapper.toResponseDTO(task);
+    }
+
+    public List<TaskResponseDTO> findByUserId(UUID userId) {
+        List<Task> tasks = repository.findByUserId(userId).orElseThrow(() -> new TaskNotFoundException(userId));
+
+        return mapper.toResponseDTOList(tasks);
     }
 
     @Transactional

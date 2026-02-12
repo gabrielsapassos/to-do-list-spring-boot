@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.UUID;
 
 @Component
 public class FilterTaskAuth extends OncePerRequestFilter {
@@ -72,6 +73,9 @@ public class FilterTaskAuth extends OncePerRequestFilter {
             response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Invalid password\"}");
             return;
         }
+
+        // Store the authenticated user ID in the request for later use in Controller/Service
+        request.setAttribute("user", user.getId());
 
         // If the user reaches here, the filter authorize the current user, going to the controller layer after this
         filterChain.doFilter(request, response);
