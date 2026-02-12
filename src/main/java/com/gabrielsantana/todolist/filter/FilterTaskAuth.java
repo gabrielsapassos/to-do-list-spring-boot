@@ -75,7 +75,7 @@ public class FilterTaskAuth extends OncePerRequestFilter {
         }
 
         // Store the authenticated user ID in the request for later use in Controller/Service
-        request.setAttribute("user", user.getId());
+        request.setAttribute("userId", user.getId());
 
         // If the user reaches here, the filter authorize the current user, going to the controller layer after this
         filterChain.doFilter(request, response);
