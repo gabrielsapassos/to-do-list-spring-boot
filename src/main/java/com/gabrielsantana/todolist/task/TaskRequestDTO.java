@@ -8,9 +8,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record TaskRequestDTO(
-        @NotNull
-        UUID userId,
-
         @NotBlank
         @Size(max = 75)
         String title,
