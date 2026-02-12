@@ -1,9 +1,7 @@
 package com.gabrielsantana.todolist.task;
 
-import com.gabrielsantana.todolist.exceptions.UserNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,11 +21,8 @@ public class TaskController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<TaskResponseDTO>> getTasks(HttpServletRequest request) {
-        UUID userId = (UUID) request.getAttribute("user");
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<List<TaskResponseDTO>> findTasks(HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
 
         List<TaskResponseDTO> tasks = taskService.findByUserId(userId);
 
@@ -35,14 +30,18 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> getTaskById(@PathVariable Long id) {
-        TaskResponseDTO response = taskService.findById(id);
+    public ResponseEntity<TaskResponseDTO> findTaskById(@PathVariable Long id, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        TaskResponseDTO response = taskService.findById(id, userId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public ResponseEntity<TaskResponseDTO> crateTask(@Valid @RequestBody TaskRequestDTO request) {
-        TaskResponseDTO task = taskService.create(request);
+    public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskRequestDTO taskRequestDTO, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        TaskResponseDTO task = taskService.create(taskRequestDTO, userId);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -51,5 +50,12 @@ public class TaskController {
                 .toUri();
 
         return ResponseEntity.created(location).body(task);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteById(id);
+
+        return ResponseEntity.notFound().build();
     }
 }

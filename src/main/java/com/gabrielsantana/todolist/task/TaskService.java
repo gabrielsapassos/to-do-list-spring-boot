@@ -2,6 +2,8 @@ package com.gabrielsantana.todolist.task;
 
 import com.gabrielsantana.todolist.exceptions.TaskNotFoundException;
 import com.gabrielsantana.todolist.user.User;
+import com.gabrielsantana.todolist.user.UserMapper;
+import com.gabrielsantana.todolist.user.UserResponseDTO;
 import com.gabrielsantana.todolist.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,23 +17,25 @@ public class TaskService {
     private final TaskRepository repository;
     private final TaskMapper mapper;
     private final UserService userService;
+    private final UserMapper userMapper;
 
-    public TaskService(TaskRepository taskRepository, TaskMapper mapper, UserService userService) {
+    public TaskService(TaskRepository taskRepository, TaskMapper mapper, UserService userService, UserMapper userMapper) {
         this.repository = taskRepository;
         this.mapper = mapper;
         this.userService = userService;
+        this.userMapper = userMapper;
     }
 
-    public List<TaskResponseDTO> findALl() {
-        List<Task> tasks = repository.findAll();
+    public TaskResponseDTO findById(Long id, UUID userId) {
+        List<TaskResponseDTO> tasks = findByUserId(userId);
 
-        return mapper.toResponseDTOList(tasks);
-    }
-
-    public TaskResponseDTO findById(Long id) {
-        Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-
-        return mapper.toResponseDTO(task);
+        for (TaskResponseDTO task : tasks) {
+            if (task.id().equals(id)) {
+                Task foundTask = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+                return mapper.toResponseDTO(foundTask);
+            }
+        }
+        throw new TaskNotFoundException(id);
     }
 
     public List<TaskResponseDTO> findByUserId(UUID userId) {
@@ -41,13 +45,20 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponseDTO create(TaskRequestDTO request) {
-        User user = userService.findById(request.userId());
+    public TaskResponseDTO create(TaskRequestDTO request, UUID userId) {
+        UserResponseDTO userResponseDTO = userService.find(userId);
+        User user = userMapper.toUserEntity(userResponseDTO);
 
         Task task = mapper.toEntity(request, user);
         repository.save(task);
 
         return mapper.toResponseDTO(task);
+    }
+
+    public void deleteById(Long id) {
+        Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+
+        repository.delete(task);
     }
 
     public void deleteTasksByUser(User user) {
