@@ -11,6 +11,7 @@ import java.util.List;
 )
 public interface UserMapper {
     User toUserEntity(UserRequestDTO userRequestDTO);
+    User toUserEntity(UserResponseDTO userResponseDTO);
 
     List<UserResponseDTO> toUserResponseDTOList (List<User> users);
     UserResponseDTO toUserResponseDTO(User user);

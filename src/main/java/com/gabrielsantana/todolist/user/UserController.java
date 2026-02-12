@@ -1,14 +1,11 @@
 package com.gabrielsantana.todolist.user;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotBlank;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,33 +18,12 @@ public class UserController {
         this.service = service;
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        List<UserResponseDTO> users = service.findAll();
-        return ResponseEntity.ok(users);
-    }
-
-    @GetMapping("/{username}")
-    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
-        UserResponseDTO user = service.findByUsername(username);
-        return ResponseEntity.ok(user);
-    }
-
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDTO> getMyProfile(HttpServletRequest request) {
-        // Recupera o userId do usuário autenticado armazenado no filtro
+    public ResponseEntity<UserResponseDTO> findUser(HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
+        UserResponseDTO user = service.find(userId);
 
-        // Busca o perfil do usuário autenticado
-        User user = service.findById(userId);
-        UserResponseDTO userDTO = new UserResponseDTO(
-            user.getId(),
-            user.getUsername(),
-            user.getName(),
-            user.getCreatedAt()
-        );
-
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("")
@@ -63,17 +39,10 @@ public class UserController {
         return ResponseEntity.created(location).body(user);
     }
 
-    @DeleteMapping("/id/{id}")
-    public ResponseEntity<UserResponseDTO> deleteUserById(@PathVariable UUID id) throws BadRequestException {
-        UserResponseDTO responseDTO = service.delete(id);
+    @DeleteMapping("/me")
+    public ResponseEntity<UserResponseDTO> deleteUser(HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
 
-        return ResponseEntity.ok(responseDTO);
-    }
-
-    @DeleteMapping("/username/{username}")
-    public ResponseEntity<UserResponseDTO> deleteUserByUsername(@PathVariable @NotBlank String username) throws BadRequestException {
-        UserResponseDTO responseDTO = service.delete(username);
-
-        return ResponseEntity.ok(responseDTO);
+        return ResponseEntity.ok(service.delete(userId));
     }
 }

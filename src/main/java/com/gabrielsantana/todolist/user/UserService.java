@@ -7,8 +7,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,20 +22,10 @@ public class UserService {
         this.taskService = taskService;
     }
 
-    public List<UserResponseDTO> findAll() {
-        List<User> users = repository.findAll();
-
-        return mapper.toUserResponseDTOList(users);
-    }
-
-    public UserResponseDTO findByUsername(String username) {
-        User user = repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+    public UserResponseDTO find(UUID id) {
+        User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
         return mapper.toUserResponseDTO(user);
-    }
-
-    public User findById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
     @Transactional
@@ -58,18 +46,6 @@ public class UserService {
         repository.delete(user);
 
         return mapper.toUserResponseDTO(user);
-    }
-
-    public UserResponseDTO delete(String username) {
-        User user = repository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-        taskService.deleteTasksByUser(user);
-        repository.delete(user);
-
-        return mapper.toUserResponseDTO(user);
-    }
-    public boolean userExists(String username) {
-        return repository.findByUsername(username).isPresent();
     }
 
     public User findEntityByUsername(String username) {
