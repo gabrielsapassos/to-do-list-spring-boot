@@ -1,6 +1,7 @@
 package com.gabrielsantana.todolist.user;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -27,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<UserResponseDTO> createUser(@RequestBody UserRequestDTO userRequest) {
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO userRequest) {
         UserResponseDTO user = service.create(userRequest);
 
         URI location = ServletUriComponentsBuilder
@@ -37,6 +38,15 @@ public class UserController {
                 .toUri();
 
         return ResponseEntity.created(location).body(user);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDTO> changeUser(@Valid @RequestBody UserUpdateDTO userUpdatetDTO, HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        UserResponseDTO user = service.update(userUpdatetDTO, userId);
+
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/me")
