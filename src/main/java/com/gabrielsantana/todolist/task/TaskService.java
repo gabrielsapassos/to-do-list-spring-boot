@@ -60,6 +60,18 @@ public class TaskService {
         return mapper.toResponseDTO(task);
     }
 
+    @Transactional
+    public TaskResponseDTO updatePartialFields(TaskPatchDTO request, UUID userId, Long taskId) {
+        Task task = repository.findEntityByIdAndUserId(taskId, userId)
+                              .orElseThrow(() -> new TaskNotFoundException(taskId, userId));
+
+        mapper.updateFromTaskPatchDTO(request, task);
+
+        repository.save(task);
+
+        return mapper.toResponseDTO(task);
+    }
+
     public void deleteById(Long id) {
         Task task = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 

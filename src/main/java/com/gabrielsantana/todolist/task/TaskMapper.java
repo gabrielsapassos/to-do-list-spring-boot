@@ -17,4 +17,7 @@ public interface TaskMapper {
     List<TaskResponseDTO> toResponseDTOList(List<Task> tasks);
 
     void updateFromTaskPutDTO(TaskPutDTO taskPutDTO, @MappingTarget Task task);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateFromTaskPatchDTO(TaskPatchDTO taskPatchDTO, @MappingTarget Task task);
 }

@@ -63,6 +63,17 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<TaskResponseDTO> updateTaskFields(@Valid @RequestBody TaskPatchDTO updateRequest,
+                                                            @PathVariable Long id,
+                                                            HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        TaskResponseDTO task = taskService.updatePartialFields(updateRequest, userId, id);
+
+        return ResponseEntity.ok(task);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteById(id);
