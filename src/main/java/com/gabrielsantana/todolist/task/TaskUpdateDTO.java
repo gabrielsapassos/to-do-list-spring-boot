@@ -13,6 +13,7 @@ public record TaskUpdateDTO(
         LocalDateTime startAt,
         LocalDateTime endAt,
 
-        TaskPriority priority
+        TaskPriority priority,
+        TaskStatus status
 ) {
 }

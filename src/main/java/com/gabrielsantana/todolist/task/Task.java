@@ -29,4 +29,7 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
+
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status = TaskStatus.PENDING;
 }

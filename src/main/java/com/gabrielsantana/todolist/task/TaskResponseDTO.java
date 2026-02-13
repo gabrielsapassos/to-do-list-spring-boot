@@ -14,6 +14,7 @@ public record TaskResponseDTO(
     LocalDateTime startAt,
     LocalDateTime endAt,
 
-    TaskPriority priority
+    TaskPriority priority,
+    TaskStatus status
 ) {
 }
