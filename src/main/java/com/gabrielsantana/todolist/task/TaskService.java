@@ -51,10 +51,10 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponseDTO update(TaskUpdateDTO request, UUID userId, Long taskId) {
+    public TaskResponseDTO updateAllFields(TaskPutDTO request, UUID userId, Long taskId) {
         Task task = repository.findEntityByIdAndUserId(taskId, userId)
                               .orElseThrow(() -> new TaskNotFoundException(taskId, userId));
-        mapper.updateFromTaskUpdateDTO(request, task);
+        mapper.updateFromTaskPutDTO(request, task);
         repository.save(task);
 
         return mapper.toResponseDTO(task);

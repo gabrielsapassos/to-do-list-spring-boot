@@ -20,6 +20,7 @@ public class Task {
 
     @Column(length = 75)
     private String title;
+
     private String description;
 
     @CreationTimestamp

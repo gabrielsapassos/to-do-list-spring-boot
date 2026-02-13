@@ -1,17 +1,11 @@
 package com.gabrielsantana.todolist.task;
 
 import com.gabrielsantana.todolist.user.User;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(
-        componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
-)
+@Mapper(componentModel = "spring")
 public interface TaskMapper {
     @Mapping(target = "user", source = "user")
     @Mapping(target = "id", ignore = true)
@@ -22,5 +16,5 @@ public interface TaskMapper {
 
     List<TaskResponseDTO> toResponseDTOList(List<Task> tasks);
 
-    void updateFromTaskUpdateDTO(TaskUpdateDTO taskUpdateDTO, @MappingTarget Task task);
+    void updateFromTaskPutDTO(TaskPutDTO taskPutDTO, @MappingTarget Task task);
 }

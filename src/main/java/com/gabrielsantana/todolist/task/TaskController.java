@@ -53,12 +53,12 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDTO> updateTask(@Valid @RequestBody TaskUpdateDTO updateRequest,
-                                                      @PathVariable Long id,
-                                                      HttpServletRequest request) {
+    public ResponseEntity<TaskResponseDTO> updateAllTaskFields(@Valid @RequestBody TaskPutDTO updateRequest,
+                                                               @PathVariable Long id,
+                                                               HttpServletRequest request) {
         UUID userId = (UUID) request.getAttribute("userId");
 
-        TaskResponseDTO task = taskService.update(updateRequest, userId, id);
+        TaskResponseDTO task = taskService.updateAllFields(updateRequest, userId, id);
 
         return ResponseEntity.ok(task);
     }
