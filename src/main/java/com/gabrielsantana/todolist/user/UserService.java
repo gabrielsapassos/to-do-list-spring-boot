@@ -39,6 +39,23 @@ public class UserService {
         return mapper.toUserResponseDTO(user);
     }
 
+    @Transactional
+    public UserResponseDTO update(UserUpdateDTO userRequest, UUID userId) {
+        User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        mapper.updateEntityFromDTO(userRequest, user);
+
+        if (userRequest.password() != null) {
+            String hash = BCrypt.withDefaults().hashToString(12, user.getPassword().toCharArray());
+
+            user.setPassword(hash);
+        }
+
+        repository.save(user);
+
+        return mapper.toUserResponseDTO(user);
+    }
+
     public UserResponseDTO delete(UUID id) {
         User user = repository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
 
