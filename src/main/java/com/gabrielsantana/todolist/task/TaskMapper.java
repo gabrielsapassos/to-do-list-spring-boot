@@ -3,6 +3,7 @@ package com.gabrielsantana.todolist.task;
 import com.gabrielsantana.todolist.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
@@ -20,4 +21,6 @@ public interface TaskMapper {
     TaskResponseDTO toResponseDTO(Task task);
 
     List<TaskResponseDTO> toResponseDTOList(List<Task> tasks);
+
+    void updateFromTaskUpdateDTO(TaskUpdateDTO taskUpdateDTO, @MappingTarget Task task);
 }
