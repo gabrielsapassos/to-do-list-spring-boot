@@ -52,6 +52,17 @@ public class TaskController {
         return ResponseEntity.created(location).body(task);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TaskResponseDTO> updateTask(@Valid @RequestBody TaskUpdateDTO updateRequest,
+                                                      @PathVariable Long id,
+                                                      HttpServletRequest request) {
+        UUID userId = (UUID) request.getAttribute("userId");
+
+        TaskResponseDTO task = taskService.update(updateRequest, userId, id);
+
+        return ResponseEntity.ok(task);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteById(id);
