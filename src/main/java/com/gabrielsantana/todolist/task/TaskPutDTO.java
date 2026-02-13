@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 public record TaskPutDTO(
         @NotBlank
-        @Size(min = 3, message = "Title must have at least 3 digits")
+        @Size(min = 3, max = 75, message = "Title must have at least 3 digits")
         String title,
 
         @Size(max = 500)
