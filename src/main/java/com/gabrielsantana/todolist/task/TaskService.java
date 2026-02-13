@@ -26,16 +26,11 @@ public class TaskService {
         this.userMapper = userMapper;
     }
 
-    public TaskResponseDTO findById(Long id, UUID userId) {
-        List<TaskResponseDTO> tasks = findByUserId(userId);
+    public TaskResponseDTO findById(Long taskId, UUID userId) {
+        Task task = repository.findEntityByIdAndUserId(taskId, userId)
+                              .orElseThrow((() -> new TaskNotFoundException(taskId, userId)));
 
-        for (TaskResponseDTO task : tasks) {
-            if (task.id().equals(id)) {
-                Task foundTask = repository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-                return mapper.toResponseDTO(foundTask);
-            }
-        }
-        throw new TaskNotFoundException(id);
+        return mapper.toResponseDTO(task);
     }
 
     public List<TaskResponseDTO> findByUserId(UUID userId) {
@@ -50,6 +45,16 @@ public class TaskService {
         User user = userMapper.toUserEntity(userResponseDTO);
 
         Task task = mapper.toEntity(request, user);
+        repository.save(task);
+
+        return mapper.toResponseDTO(task);
+    }
+
+    @Transactional
+    public TaskResponseDTO update(TaskUpdateDTO request, UUID userId, Long taskId) {
+        Task task = repository.findEntityByIdAndUserId(taskId, userId)
+                              .orElseThrow(() -> new TaskNotFoundException(taskId, userId));
+        mapper.updateFromTaskUpdateDTO(request, task);
         repository.save(task);
 
         return mapper.toResponseDTO(task);
