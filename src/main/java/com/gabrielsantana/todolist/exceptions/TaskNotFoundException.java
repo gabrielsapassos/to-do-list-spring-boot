@@ -14,5 +14,8 @@ public class TaskNotFoundException extends RuntimeException {
     public TaskNotFoundException(UUID userId) {
         super("Couldn't find any task with user id: " + userId);
     }
+    public TaskNotFoundException(Long id, UUID userId) {
+        super("Couldn't find any task with id: " + id + " or it doesn't belong to the user: " + userId);
+    }
 
 }
